@@ -21,9 +21,8 @@ Array::Utils - small utils for array manipulation
 	my @unique = unique(@a, @b);
 	
 	# check if arrays contain same members
-	# (probably in different order)
 	
-	if ( same_members(@a, @b) ) {
+	if ( !array_diff(@a, @b) ) {
 		# do something
 	}
 	
@@ -47,11 +46,6 @@ Returns an intersection of two arrays passed as arguments.
 =item C<array_diff>
 
 Return symmetric difference of two arrays passed as arguments.
-
-=item C<same_members>
-
-If two arrays passed as arguments contain same members the function
-returns true, even if the members are contained in different order.
 
 =back
 
@@ -89,35 +83,24 @@ our %EXPORT_TAGS = (
 		&unique
 		&intersect
 		&array_diff
-		&same_members
 	) ],
 );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 sub unique(@) {
-	my %seen = ();
-	return grep { ! $seen{$_}++ } @_;
+	return keys %{{map {$_=>1} @_}};
 }
 
 sub intersect(\@\@) {
-	my %seen = ();
-	my @isect = ();
-	$seen{$_}++ and push ( @isect, $_ ) for (@{ $_[0]}, @{ $_[1] });
-	return @isect;
+	my %e = map {$_=>1} @{$_[0]};
+	return grep { $e{$_} } @{$_[1]};
 }
 
 sub array_diff(\@\@) {
-	my %seen = ();
-	$seen{$_}++ for (@{ $_[0]}, @{ $_[1] });
-	return grep { !($seen{$_} == 2) } keys %seen;
-}
-
-sub same_members(\@\@) {
-	my %seen = ();
-	$seen{$_}++ for (@{ $_[0]}, @{ $_[1] });
-	return ( grep { $seen{$_} != 2 } keys %seen ) ? 0 : 1;
+	my %e = map {$_=>1} @{$_[1]};
+	return ( (grep { not delete $e{$_} } @{$_[0]}), keys %e);
 }
 
 1;
