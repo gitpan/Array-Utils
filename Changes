@@ -1,0 +1,12 @@
+=item 0.3 - April 04 2007
+
+Fix scalar context with emty arrays args
+
+=item 0.2 - March 09 2007
+
+Removed same_members function.
+Optimized code.
+
+=item 0.1 - March 08 2007
+
+First public release

@@ -32,3 +32,9 @@ ok ( !array_diff( @isect, @isect_ethalon ), "Array intersection" );
 my @diff = array_diff(@a, @b);
 is ( scalar(@diff), 4, "Array symmetric difference count" );
 ok ( !array_diff( @diff, @diff_ethalon), "Array symmetric difference" );
+
+my @c = ();
+
+ok ( array_diff( @a, @c ), "Array diff with empty array");
+ok ( array_diff( @c, @a ), "Array diff with empty array reverse order");
+ok ( !array_diff( @c, @c ), "Array diff with empty arrays");

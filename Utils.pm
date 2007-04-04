@@ -78,6 +78,8 @@ use strict;
 require Exporter;
 our @ISA = qw(Exporter);
 
+use Data::Dumper;
+
 our %EXPORT_TAGS = (
 	all	=> [ qw(
 		&unique
@@ -87,7 +89,7 @@ our %EXPORT_TAGS = (
 );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 sub unique(@) {
 	return keys %{{map {$_=>1} @_}};
@@ -100,7 +102,7 @@ sub intersect(\@\@) {
 
 sub array_diff(\@\@) {
 	my %e = map {$_=>1} @{$_[1]};
-	return ( (grep { not delete $e{$_} } @{$_[0]}), keys %e);
+	return @{[ ( grep { !delete $e{$_} } @{ $_[0] } ), keys %e ] };
 }
 
 1;
