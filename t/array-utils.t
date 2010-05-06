@@ -20,6 +20,7 @@ ok ( !array_diff(@a, @a), "Array members comparison - same array" );
 my @union_ethalon = qw( a b c d e f );
 my @isect_ethalon = qw( c d );
 my @diff_ethalon = qw( a b e f );
+my @minus_ethalon = qw( a b );
 
 my @union = unique(@a, @b);
 is ( scalar(@union), 6, "Array unique union count" );
@@ -33,8 +34,16 @@ my @diff = array_diff(@a, @b);
 is ( scalar(@diff), 4, "Array symmetric difference count" );
 ok ( !array_diff( @diff, @diff_ethalon), "Array symmetric difference" );
 
-my @c = ();
+my @empty = ();
 
-ok ( array_diff( @a, @c ), "Array diff with empty array");
-ok ( array_diff( @c, @a ), "Array diff with empty array reverse order");
-ok ( !array_diff( @c, @c ), "Array diff with empty arrays");
+ok ( array_diff( @a, @empty ), "Array diff with empty array");
+ok ( array_diff( @empty, @a ), "Array diff with empty array reverse order");
+ok ( !array_diff( @empty, @empty ), "Array diff with empty arrays");
+
+my @minus = array_minus( @a, @b );
+is( scalar( @minus ), 2, "Array minus count" );
+ok( !array_diff( @minus, @minus_ethalon ), "Array minus" );
+
+ok( !array_minus( @empty, @b ), "Empty array minus an array" );
+@minus = array_minus( @a, @empty );
+ok( !array_diff( @a, @minus ), "Substracting an empty array has no effect" );

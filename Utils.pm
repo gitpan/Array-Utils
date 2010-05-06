@@ -21,10 +21,12 @@ Array::Utils - small utils for array manipulation
 	my @unique = unique(@a, @b);
 	
 	# check if arrays contain same members
-	
 	if ( !array_diff(@a, @b) ) {
 		# do something
 	}
+	
+	# get items from array @a that are not in array @b
+	my @minus = array_minus( @a, @b );
 	
 =head1 DESCRIPTION
 
@@ -41,11 +43,24 @@ Returns an array of unique items in the arguments list.
 
 =item C<intersect>
 
-Returns an intersection of two arrays passed as arguments.
+Returns an intersection of two arrays passed as arguments, keeping the order of the
+second parameter. A nice side effect of this function can be exploited in situations as:
+
+	@atreides = qw( Leto Paul Alia 'Leto II' );
+	@mylist = qw( Alia Leto );
+	@mylist = intersect( @mylist, @atreides );  # and @mylist is ordered as Leto,Alia
 
 =item C<array_diff>
 
 Return symmetric difference of two arrays passed as arguments.
+
+=item C<array_minus>
+
+Returns the difference of the passed arrays A and B (only those 
+array elements that exist in A and do not exist in B). 
+If an empty array is returned, A is subset of B.
+
+Function was proposed by Laszlo Forro <salmonix@gmail.com>.
 
 =back
 
@@ -85,24 +100,30 @@ our %EXPORT_TAGS = (
 		&unique
 		&intersect
 		&array_diff
+		&array_minus
 	) ],
 );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
-our $VERSION = '0.3';
+our $VERSION = '0.4';
 
 sub unique(@) {
-	return keys %{{map {$_=>1} @_}};
+	return keys %{ {map { $_ => undef } @_}}; 
 }
 
 sub intersect(\@\@) {
-	my %e = map {$_=>1} @{$_[0]};
-	return grep { $e{$_} } @{$_[1]};
+	my %e = map { $_ => undef } @{$_[0]};
+	return grep { exists( $e{$_} ) } @{$_[1]};
 }
 
 sub array_diff(\@\@) {
-	my %e = map {$_=>1} @{$_[1]};
-	return @{[ ( grep { !delete $e{$_} } @{ $_[0] } ), keys %e ] };
+	my %e = map { $_ => undef } @{$_[1]};
+	return @{[ ( grep { (exists $e{$_}) ? ( delete $e{$_} ) : ( 1 ) } @{ $_[0] } ), keys %e ] };
+}
+
+sub array_minus(\@\@) {
+	my %e = map{ $_ => undef } @{$_[1]};
+	return grep( ! exists( $e{$_} ), @{$_[0]} ); 
 }
 
 1;
