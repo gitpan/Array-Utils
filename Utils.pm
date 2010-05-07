@@ -93,8 +93,6 @@ use strict;
 require Exporter;
 our @ISA = qw(Exporter);
 
-use Data::Dumper;
-
 our %EXPORT_TAGS = (
 	all	=> [ qw(
 		&unique
@@ -105,7 +103,7 @@ our %EXPORT_TAGS = (
 );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
-our $VERSION = '0.4';
+our $VERSION = '0.5';
 
 sub unique(@) {
 	return keys %{ {map { $_ => undef } @_}}; 
